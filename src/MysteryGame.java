@@ -513,22 +513,29 @@ public class MysteryGame {
             dialogueText.setEditable(false);
             dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-            // Question Buttons - FIXED LAYOUT
-            JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+            // Question Buttons Panel - Improved Layout
+            JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10)); // Changed to 3 rows
             buttonPanel.setOpaque(false);
             buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
+            // Question 1 Button
             JButton question1Button = createStyledButton("\"Did Blackwood seem unusually interested in the Oracle?\"");
-            question1Button.setFont(new Font("Algerian", Font.PLAIN, 18)); // override font size here
+            question1Button.setFont(new Font("Algerian", Font.PLAIN, 18));
             question1Button.addActionListener(e -> showBlackwoodInterest());
 
+            // Question 2 Button
             JButton question2Button = createStyledButton("\"Where can I find Mr. Blackwood?\"");
             question2Button.addActionListener(e -> showBlackwoodLocation());
 
+            // Back Button
+            JButton backButton = createStyledButton("Back to Previous Questions");
+            backButton.addActionListener(e -> showCuratorResponse()); // Goes back to previous screen
+
             buttonPanel.add(question1Button);
             buttonPanel.add(question2Button);
+            buttonPanel.add(backButton); // Added back button
 
-            // FIXED COMPONENT ASSEMBLY
+            // Component Assembly
             dialoguePanel.add(dialogueText, BorderLayout.CENTER);
             dialoguePanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -562,31 +569,31 @@ public class MysteryGame {
             };
             interestPanel.setLayout(new BorderLayout());
 
-            JPanel contentPanel = new JPanel(new BorderLayout(0, -20));
+            // Main content panel
+            JPanel contentPanel = new JPanel(new BorderLayout());
             contentPanel.setOpaque(false);
-            contentPanel.setBorder(BorderFactory.createEmptyBorder(300, 100, -500, 20));
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+            // Curator panel (left side)
+            JPanel curatorPanel = new JPanel(new BorderLayout());
+            curatorPanel.setOpaque(false);
 
             URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
             ImageIcon curatorIcon = new ImageIcon(curatorUrl);
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
 
-            JPanel leftPanel = new JPanel();
-            leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-            leftPanel.setOpaque(false);
-            leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
             JLabel curatorTitle = new JLabel("<html><center>Museum Curator<br>The person who reported the theft</center></html>");
             curatorTitle.setFont(new Font("Algerian", Font.BOLD, 18));
             curatorTitle.setForeground(Color.WHITE);
-            curatorTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-            leftPanel.add(curatorTitle);
-            leftPanel.add(Box.createVerticalStrut(10));
-            leftPanel.add(curatorImage);
+            curatorTitle.setHorizontalAlignment(JLabel.CENTER);
 
+            curatorPanel.add(curatorTitle, BorderLayout.NORTH);
+            curatorPanel.add(curatorImage, BorderLayout.CENTER);
+
+            // Dialogue panel (center)
             JPanel dialoguePanel = new JPanel(new BorderLayout());
             dialoguePanel.setOpaque(false);
-            dialoguePanel.setBorder(BorderFactory.createEmptyBorder(50, 0, -100, 0));
 
             JTextArea dialogueText = new JTextArea(
                     "\"Now that you mention it... he kept asking about its 'true power,' not just its history. " +
@@ -598,15 +605,24 @@ public class MysteryGame {
             dialogueText.setLineWrap(true);
             dialogueText.setWrapStyleWord(true);
             dialogueText.setEditable(false);
-            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 50, 0));
+            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
+            // Action button
             JButton continueButton = createStyledButton("Continue to Blackwood Estate");
             continueButton.addActionListener(e -> showBlackwoodEstate());
 
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            buttonPanel.setOpaque(false);
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+            buttonPanel.add(continueButton);
+
+            // Assemble components
             dialoguePanel.add(dialogueText, BorderLayout.CENTER);
-            dialoguePanel.add(continueButton, BorderLayout.SOUTH);
-            contentPanel.add(leftPanel, BorderLayout.WEST);
+            dialoguePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+            contentPanel.add(curatorPanel, BorderLayout.WEST);
             contentPanel.add(dialoguePanel, BorderLayout.CENTER);
+
             interestPanel.add(contentPanel, BorderLayout.CENTER);
 
             frame.add(interestPanel);
@@ -618,7 +634,6 @@ public class MysteryGame {
             JOptionPane.showMessageDialog(frame, "Error loading Blackwood interest screen", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private static void showBlackwoodLocation() {
         try {
             frame.getContentPane().removeAll();
@@ -634,31 +649,31 @@ public class MysteryGame {
             };
             locationPanel.setLayout(new BorderLayout());
 
-            JPanel contentPanel = new JPanel(new BorderLayout(0, -20));
+            // Main content panel
+            JPanel contentPanel = new JPanel(new BorderLayout());
             contentPanel.setOpaque(false);
-            contentPanel.setBorder(BorderFactory.createEmptyBorder(300, 100, -500, 20));
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+            // Curator panel (left side)
+            JPanel curatorPanel = new JPanel(new BorderLayout());
+            curatorPanel.setOpaque(false);
 
             URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
             ImageIcon curatorIcon = new ImageIcon(curatorUrl);
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
 
-            JPanel leftPanel = new JPanel();
-            leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-            leftPanel.setOpaque(false);
-            leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
             JLabel curatorTitle = new JLabel("<html><center>Museum Curator<br>The person who reported the theft</center></html>");
             curatorTitle.setFont(new Font("Algerian", Font.BOLD, 18));
             curatorTitle.setForeground(Color.WHITE);
-            curatorTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-            leftPanel.add(curatorTitle);
-            leftPanel.add(Box.createVerticalStrut(10));
-            leftPanel.add(curatorImage);
+            curatorTitle.setHorizontalAlignment(JLabel.CENTER);
 
+            curatorPanel.add(curatorTitle, BorderLayout.NORTH);
+            curatorPanel.add(curatorImage, BorderLayout.CENTER);
+
+            // Dialogue panel (center)
             JPanel dialoguePanel = new JPanel(new BorderLayout());
             dialoguePanel.setOpaque(false);
-            dialoguePanel.setBorder(BorderFactory.createEmptyBorder(50, 0, -100, 0));
 
             JTextArea dialogueText = new JTextArea(
                     "\"His estate on the outskirts of town. But detective, he's a powerful man—be careful.\""
@@ -669,15 +684,24 @@ public class MysteryGame {
             dialogueText.setLineWrap(true);
             dialogueText.setWrapStyleWord(true);
             dialogueText.setEditable(false);
-            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 50, 0));
+            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
+            // Action button
             JButton continueButton = createStyledButton("Continue to Blackwood Estate");
             continueButton.addActionListener(e -> showBlackwoodEstate());
 
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            buttonPanel.setOpaque(false);
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+            buttonPanel.add(continueButton);
+
+            // Assemble components
             dialoguePanel.add(dialogueText, BorderLayout.CENTER);
-            dialoguePanel.add(continueButton, BorderLayout.SOUTH);
-            contentPanel.add(leftPanel, BorderLayout.WEST);
+            dialoguePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+            contentPanel.add(curatorPanel, BorderLayout.WEST);
             contentPanel.add(dialoguePanel, BorderLayout.CENTER);
+
             locationPanel.add(contentPanel, BorderLayout.CENTER);
 
             frame.add(locationPanel);
@@ -691,9 +715,137 @@ public class MysteryGame {
     }
 
     private static void showBlackwoodEstate() {
-        JOptionPane.showMessageDialog(frame,
-                "This will be the estate scene where you confront Blackwood",
-                "Next Step",
-                JOptionPane.INFORMATION_MESSAGE);
+        try {
+            // Remove the current content
+            frame.getContentPane().removeAll();
+
+            // Load the estate background image
+            URL bgUrl = new URL("https://img.freepik.com/premium-photo/inside-library-pixel-art-style-maniac-mansion_923558-5562.jpg");
+            ImageIcon backgroundImage = new ImageIcon(bgUrl);
+
+            // Create panel with background
+            JPanel estatePanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+            estatePanel.setLayout(new BorderLayout());
+
+            // Create a content panel
+            JPanel contentPanel = new JPanel(new BorderLayout());
+            contentPanel.setOpaque(false);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+            // Create detective panel (left side)
+            JPanel detectivePanel = new JPanel(new BorderLayout());
+            detectivePanel.setOpaque(false);
+
+            // Load and add detective image
+            String detectiveImagePath = playerCharacter.equals("Detective Sir") ?
+                    "C:\\Users\\15862\\Desktop\\Detective You (1).png" :
+                    "C:\\Users\\15862\\Desktop\\Detective Laura.png";
+            ImageIcon detectiveIcon = new ImageIcon(detectiveImagePath);
+            Image scaledDetective = detectiveIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            JLabel detectiveImage = new JLabel(new ImageIcon(scaledDetective));
+
+            // Add detective label
+            JLabel detectiveLabel = new JLabel("<html><center>" + playerName + "<br>" + playerCharacter + "</center></html>");
+            detectiveLabel.setFont(new Font("Algerian", Font.BOLD, 18));
+            detectiveLabel.setForeground(Color.WHITE);
+            detectiveLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            detectivePanel.add(detectiveLabel, BorderLayout.NORTH);
+            detectivePanel.add(detectiveImage, BorderLayout.CENTER);
+
+            // Create dialogue panel (center)
+            JPanel dialoguePanel = new JPanel(new BorderLayout());
+            dialoguePanel.setOpaque(false);
+
+            // Create dialogue text
+            JTextArea dialogueText = new JTextArea(
+                    "\"Hmm... blueprints? Not just any, security blueprints. Oh? What's this? " +
+                            "A shipping manifest for 'Delphi Project', but it appears to be a fake artifact label.\""
+            );
+            dialogueText.setFont(new Font("Press Start 2P", Font.PLAIN, 15));
+            dialogueText.setForeground(Color.WHITE);
+            dialogueText.setBackground(new Color(0, 0, 0, 150));
+            dialogueText.setLineWrap(true);
+            dialogueText.setWrapStyleWord(true);
+            dialogueText.setEditable(false);
+            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+            dialoguePanel.add(dialogueText, BorderLayout.CENTER);
+
+            // Create Blackwood panel (right side)
+            JPanel blackwoodPanel = new JPanel(new BorderLayout());
+            blackwoodPanel.setOpaque(false);
+
+            // Load and add Blackwood image
+            URL blackwoodUrl = new URL("file:///C:/Users/15862/Desktop/MRBLACKWOOD.png");
+            ImageIcon blackwoodIcon = new ImageIcon(blackwoodUrl);
+            Image scaledBlackwood = blackwoodIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            JLabel blackwoodImage = new JLabel(new ImageIcon(scaledBlackwood));
+
+            // Add Blackwood label
+            JLabel blackwoodLabel = new JLabel("<html><center>Mr. Blackwood<br>Museum Benefactor</center></html>");
+            blackwoodLabel.setFont(new Font("Algerian", Font.BOLD, 18));
+            blackwoodLabel.setForeground(Color.WHITE);
+            blackwoodLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            blackwoodPanel.add(blackwoodLabel, BorderLayout.NORTH);
+            blackwoodPanel.add(blackwoodImage, BorderLayout.CENTER);
+
+            // Create Blackwood's dialogue
+            JTextArea blackwoodDialogue = new JTextArea(
+                    "\"Detective. I heard about the museum's... misfortune. " +
+                            "But surely you don't suspect me? I'm a patron of the arts, not a thief.\""
+            );
+            blackwoodDialogue.setFont(new Font("Press Start 2P", Font.PLAIN, 15));
+            blackwoodDialogue.setForeground(Color.WHITE);
+            blackwoodDialogue.setBackground(new Color(0, 0, 0, 150));
+            blackwoodDialogue.setLineWrap(true);
+            blackwoodDialogue.setWrapStyleWord(true);
+            blackwoodDialogue.setEditable(false);
+            blackwoodDialogue.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+            dialoguePanel.add(blackwoodDialogue, BorderLayout.SOUTH);
+
+            // Create action buttons panel
+            JPanel actionPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+            actionPanel.setOpaque(false);
+            actionPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
+
+            JButton interrogateButton = createStyledButton("Interrogate Blackwood");
+            interrogateButton.addActionListener(e -> {
+                // Add interrogation logic here
+                JOptionPane.showMessageDialog(frame, "Interrogation options would appear here");
+            });
+
+            JButton returnButton = createStyledButton("Return to Museum");
+            returnButton.addActionListener(e -> showCuratorIntroduction());
+
+            actionPanel.add(interrogateButton);
+            actionPanel.add(returnButton);
+
+            // Add components to content panel
+            contentPanel.add(detectivePanel, BorderLayout.WEST);
+            contentPanel.add(dialoguePanel, BorderLayout.CENTER);
+            contentPanel.add(blackwoodPanel, BorderLayout.EAST);
+            contentPanel.add(actionPanel, BorderLayout.SOUTH);  // Only add actionPanel, not continueButton
+
+            // Add content panel to main panel
+            estatePanel.add(contentPanel, BorderLayout.CENTER);
+
+            // Update the frame
+            frame.add(estatePanel);
+            frame.revalidate();
+            frame.repaint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Error loading Blackwood estate screen", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
