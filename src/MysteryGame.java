@@ -716,14 +716,10 @@ public class MysteryGame {
 
     private static void showBlackwoodEstate() {
         try {
-            // Remove the current content
             frame.getContentPane().removeAll();
-
-            // Load the estate background image
             URL bgUrl = new URL("https://img.freepik.com/premium-photo/inside-library-pixel-art-style-maniac-mansion_923558-5562.jpg");
             ImageIcon backgroundImage = new ImageIcon(bgUrl);
 
-            // Create panel with background
             JPanel estatePanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -817,11 +813,9 @@ public class MysteryGame {
             actionPanel.setOpaque(false);
             actionPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
 
+            // Updated interrogation button to use showBlackwoodOption1()
             JButton interrogateButton = createStyledButton("Interrogate Blackwood");
-            interrogateButton.addActionListener(e -> {
-                // Add interrogation logic here
-                JOptionPane.showMessageDialog(frame, "Interrogation options would appear here");
-            });
+            interrogateButton.addActionListener(e -> showBlackwoodOption1());
 
             JButton returnButton = createStyledButton("Return to Museum");
             returnButton.addActionListener(e -> showCuratorIntroduction());
@@ -833,7 +827,7 @@ public class MysteryGame {
             contentPanel.add(detectivePanel, BorderLayout.WEST);
             contentPanel.add(dialoguePanel, BorderLayout.CENTER);
             contentPanel.add(blackwoodPanel, BorderLayout.EAST);
-            contentPanel.add(actionPanel, BorderLayout.SOUTH);  // Only add actionPanel, not continueButton
+            contentPanel.add(actionPanel, BorderLayout.SOUTH);
 
             // Add content panel to main panel
             estatePanel.add(contentPanel, BorderLayout.CENTER);
@@ -846,6 +840,123 @@ public class MysteryGame {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Error loading Blackwood estate screen", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private static void showBlackwoodOption1() {
+        try {
+            // Remove the current content
+            frame.getContentPane().removeAll();
+
+            // Load the estate background image
+            URL bgUrl = new URL("https://img.freepik.com/premium-photo/inside-library-pixel-art-style-maniac-mansion_923558-5562.jpg");
+            ImageIcon backgroundImage = new ImageIcon(bgUrl);
+
+            // Create panel with background
+            JPanel optionPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+            optionPanel.setLayout(new BorderLayout());
+
+            // Create a content panel
+            JPanel contentPanel = new JPanel(new BorderLayout());
+            contentPanel.setOpaque(false);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+            // Create Blackwood panel (right side)
+            JPanel blackwoodPanel = new JPanel(new BorderLayout());
+            blackwoodPanel.setOpaque(false);
+
+            // Load and add Blackwood image
+            URL blackwoodUrl = new URL("file:///C:/Users/15862/Desktop/blackwood_portrait.png");
+            ImageIcon blackwoodIcon = new ImageIcon(blackwoodUrl);
+            Image scaledBlackwood = blackwoodIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            JLabel blackwoodImage = new JLabel(new ImageIcon(scaledBlackwood));
+
+            // Add Blackwood label
+            JLabel blackwoodLabel = new JLabel("<html><center>Mr. Blackwood<br>Museum Benefactor</center></html>");
+            blackwoodLabel.setFont(new Font("Algerian", Font.BOLD, 18));
+            blackwoodLabel.setForeground(Color.WHITE);
+            blackwoodLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            blackwoodPanel.add(blackwoodLabel, BorderLayout.NORTH);
+            blackwoodPanel.add(blackwoodImage, BorderLayout.CENTER);
+
+            // Create dialogue panel (center)
+            JPanel dialoguePanel = new JPanel(new BorderLayout());
+            dialoguePanel.setOpaque(false);
+
+            // Create dialogue text
+            JTextArea dialogueText = new JTextArea(
+                    "\"Interest? Pah! It's history. Though... legends say the Oracle's fragments *whisper* " +
+                            "if assembled. Superstition, of course.\" (Laughs too loudly.)"
+            );
+            dialogueText.setFont(new Font("Press Start 2P", Font.PLAIN, 15));
+            dialogueText.setForeground(Color.WHITE);
+            dialogueText.setBackground(new Color(0, 0, 0, 150));
+            dialogueText.setLineWrap(true);
+            dialogueText.setWrapStyleWord(true);
+            dialogueText.setEditable(false);
+            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+            dialoguePanel.add(dialogueText, BorderLayout.CENTER);
+
+            // Create follow-up options
+            JPanel optionsPanel = new JPanel(new GridLayout(1, 1, 10, 10));
+            optionsPanel.setOpaque(false);
+            optionsPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
+
+            JButton followUpButton = createStyledButton("\"Legends? Or a reason to steal it?\"");
+            followUpButton.addActionListener(e -> {
+                JTextArea followUpText = new JTextArea(
+                        "\"Careful, detective. Accusations require evidence.\" (His hand trembles on the cigar.)"
+                );
+                followUpText.setFont(new Font("Press Start 2P", Font.PLAIN, 15));
+                followUpText.setForeground(Color.WHITE);
+                followUpText.setBackground(new Color(0, 0, 0, 150));
+                followUpText.setLineWrap(true);
+                followUpText.setWrapStyleWord(true);
+                followUpText.setEditable(false);
+                followUpText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+                dialoguePanel.add(followUpText, BorderLayout.SOUTH);
+                followUpButton.setEnabled(false);
+
+                JButton continueButton = createStyledButton("Continue Investigation");
+                continueButton.addActionListener(ev -> {
+                    JOptionPane.showMessageDialog(frame,
+                            "Clue Gained: Blackwood obsessed with the Oracle's \"whispers.\"",
+                            "New Clue",
+                            JOptionPane.INFORMATION_MESSAGE);
+                });
+
+                optionsPanel.removeAll();
+                optionsPanel.add(continueButton);
+                frame.revalidate();
+                frame.repaint();
+            });
+
+            optionsPanel.add(followUpButton);
+
+            // Add components to content panel
+            contentPanel.add(blackwoodPanel, BorderLayout.EAST);
+            contentPanel.add(dialoguePanel, BorderLayout.CENTER);
+            contentPanel.add(optionsPanel, BorderLayout.SOUTH);
+
+            // Add content panel to main panel
+            optionPanel.add(contentPanel, BorderLayout.CENTER);
+
+            // Update the frame
+            frame.add(optionPanel);
+            frame.revalidate();
+            frame.repaint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Error loading Blackwood option 1 screen", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
