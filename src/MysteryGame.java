@@ -3,32 +3,44 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.awt.image.BufferedImage;
 
 public class MysteryGame {
+    // Main application window
     private static JFrame frame;
+
+    // Background panel that holds other components
     private static JPanel backgroundPanel;
+
+    // Player information
     private static String playerName = "";
     private static String playerCharacter = "";
+
+    // Custom colors and fonts
     private static final Color DARK_RED = new Color(139, 0, 0);
     private static final Font TITLE_FONT = new Font("Algerian", Font.BOLD, 48);
     private static final Font BUTTON_FONT = new Font("Algerian", Font.BOLD, 25);
 
     public static void main(String[] args) {
+        // Use SwingUtilities to ensure GUI creation happens on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
             createAndShowGUI();
         });
     }
 
     private static void createAndShowGUI() {
+        // Set up main window
         frame = new JFrame("Relic Hunter: The Stolen Oracle");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1024, 640);
         frame.setResizable(false);
 
         try {
+            // Load background image from URL
             URL imageUrl = new URL("https://www.relyonhorror.com/wp-content/uploads/2018/12/uncanny-valley-screen-05-ps4-us-10jan17-1024x640.jpg");
             ImageIcon backgroundImage = new ImageIcon(imageUrl);
 
+            // Create panel with background image
             backgroundPanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -38,21 +50,26 @@ public class MysteryGame {
             };
             backgroundPanel.setLayout(new GridBagLayout());
 
+            // Create title label
             JLabel titleLabel = new JLabel("Relic Hunter: The Stolen Oracle");
             titleLabel.setFont(TITLE_FONT);
             titleLabel.setForeground(DARK_RED);
             titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
+            // Create start button
             JButton startButton = createStyledButton("Begin Story");
             startButton.addActionListener(e -> showCharacterSelectionScreen());
 
+            // Layout constraints
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.insets = new Insets(0, 0, 50, 0);
 
+            // Add components to panel
             backgroundPanel.add(titleLabel, gbc);
-            backgroundPanel.add(startButton);
+            backgroundPanel.add(startButton, gbc);
 
+            // Finalize frame
             frame.add(backgroundPanel);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
@@ -74,6 +91,7 @@ public class MysteryGame {
         button.setOpaque(true);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        // Hover effects
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(30, 30, 30));
@@ -102,22 +120,26 @@ public class MysteryGame {
             };
             selectionPanel.setLayout(new GridBagLayout());
 
+            // Title label
             JLabel selectLabel = new JLabel("Select Your Detective");
             selectLabel.setFont(TITLE_FONT);
             selectLabel.setForeground(DARK_RED);
             selectLabel.setHorizontalAlignment(JLabel.CENTER);
 
+            // Character selection panel
             JPanel charactersPanel = new JPanel(new GridLayout(1, 2, 50, 0));
             charactersPanel.setOpaque(false);
 
+            // Male character panel
             JPanel malePanel = createCharacterPanel(
-                    "C:\\Users\\15862\\Desktop\\Detective You (1).png",
+                    "/images/Detective You (1).png",
                     "Detective Sir",
                     "Choose Detective Sir"
             );
 
+            // Female character panel
             JPanel femalePanel = createCharacterPanel(
-                    "C:\\Users\\15862\\Desktop\\Detective Laura.png",
+                    "/images/Detective You.png",
                     "Detective Ma'am",
                     "Choose Detective Ma'am"
             );
@@ -142,10 +164,39 @@ public class MysteryGame {
         }
     }
 
-    private static JPanel createCharacterPanel(String imagePath, String characterType, String buttonText) {
-        ImageIcon icon = new ImageIcon(imagePath);
+    private static JPanel createCharacterPanel(String resourcePath, String characterType, String buttonText) {
+        System.out.println("Attempting to load: " + resourcePath);
+        ImageIcon icon = null;
+        try {
+            // Try loading from resources first
+            URL imageUrl = MysteryGame.class.getResource(resourcePath);
+            System.out.println("Resource URL: " + imageUrl);
+
+            if (imageUrl == null) {
+                System.out.println("Trying absolute path for: " + resourcePath);
+                icon = new ImageIcon(resourcePath);
+            } else {
+                icon = new ImageIcon(imageUrl);
+            }
+
+            // Fallback if image still not found
+            if (icon.getImage() == null) {
+                System.err.println("Failed to load image: " + resourcePath);
+                BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = placeholder.createGraphics();
+                g2d.setColor(Color.RED);
+                g2d.fillRect(0, 0, 200, 200);
+                g2d.dispose();
+                icon = new ImageIcon(placeholder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Create image label
         JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH)));
 
+        // Create selection button
         JButton button = createStyledButton(buttonText);
         button.setFont(new Font("Algerian", Font.BOLD, 20));
         button.addActionListener(e -> {
@@ -153,6 +204,7 @@ public class MysteryGame {
             showNameInputDialog();
         });
 
+        // Assemble panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
         panel.add(imageLabel, BorderLayout.CENTER);
@@ -166,12 +218,14 @@ public class MysteryGame {
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
+        // Instruction label
         JLabel label = new JLabel("Enter your detective's name:");
         label.setFont(new Font("Algerian", Font.BOLD, 18));
         label.setForeground(DARK_RED);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label, BorderLayout.NORTH);
 
+        // Name input field
         JTextField textField = new JTextField(20);
         textField.setFont(new Font("Arial", Font.PLAIN, 16));
         textField.setBackground(Color.BLACK);
@@ -180,6 +234,7 @@ public class MysteryGame {
         textField.setBorder(BorderFactory.createLineBorder(DARK_RED, 2));
         panel.add(textField, BorderLayout.CENTER);
 
+        // Show dialog
         int result = JOptionPane.showOptionDialog(
                 frame,
                 panel,
@@ -191,6 +246,7 @@ public class MysteryGame {
                 "Confirm"
         );
 
+        // Handle result
         if (result == JOptionPane.OK_OPTION) {
             playerName = textField.getText().trim();
             if (!playerName.isEmpty()) {
@@ -232,8 +288,29 @@ public class MysteryGame {
             contentPanel.setOpaque(false);
             contentPanel.setBorder(BorderFactory.createEmptyBorder(300, 100, -500, 20));
 
-            URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
-            ImageIcon curatorIcon = new ImageIcon(curatorUrl);
+            // Load curator image with fallback
+            ImageIcon curatorIcon;
+            try {
+                URL curatorUrl = MysteryGame.class.getResource("/images/portrait (1).png");
+                if (curatorUrl != null) {
+                    curatorIcon = new ImageIcon(curatorUrl);
+                } else {
+                    BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = placeholder.createGraphics();
+                    g2d.setColor(Color.RED);
+                    g2d.fillRect(0, 0, 200, 200);
+                    g2d.dispose();
+                    curatorIcon = new ImageIcon(placeholder);
+                }
+            } catch (Exception e) {
+                BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = placeholder.createGraphics();
+                g2d.setColor(Color.RED);
+                g2d.fillRect(0, 0, 200, 200);
+                g2d.dispose();
+                curatorIcon = new ImageIcon(placeholder);
+            }
+
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
 
@@ -310,11 +387,33 @@ public class MysteryGame {
             contentPanel.setOpaque(false);
             contentPanel.setBorder(BorderFactory.createEmptyBorder(300, 100, -500, 20));
 
+            // Load detective image based on selected character
             String detectiveImagePath = playerCharacter.equals("Detective Sir") ?
-                    "C:\\Users\\15862\\Desktop\\Detective You (1).png" :
-                    "C:\\Users\\15862\\Desktop\\Detective Laura.png";
+                    "/images/Detective You (1).png" :
+                    "/images/Detective You.png";
 
-            ImageIcon detectiveIcon = new ImageIcon(detectiveImagePath);
+            ImageIcon detectiveIcon;
+            try {
+                URL detectiveUrl = MysteryGame.class.getResource(detectiveImagePath);
+                if (detectiveUrl != null) {
+                    detectiveIcon = new ImageIcon(detectiveUrl);
+                } else {
+                    BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = placeholder.createGraphics();
+                    g2d.setColor(Color.BLUE);
+                    g2d.fillRect(0, 0, 200, 200);
+                    g2d.dispose();
+                    detectiveIcon = new ImageIcon(placeholder);
+                }
+            } catch (Exception e) {
+                BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = placeholder.createGraphics();
+                g2d.setColor(Color.BLUE);
+                g2d.fillRect(0, 0, 200, 200);
+                g2d.dispose();
+                detectiveIcon = new ImageIcon(placeholder);
+            }
+
             Image scaledDetective = detectiveIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel detectiveImage = new JLabel(new ImageIcon(scaledDetective));
 
@@ -391,8 +490,29 @@ public class MysteryGame {
             contentPanel.setOpaque(false);
             contentPanel.setBorder(BorderFactory.createEmptyBorder(300, 100, -500, 20));
 
-            URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
-            ImageIcon curatorIcon = new ImageIcon(curatorUrl);
+            // Load curator image
+            ImageIcon curatorIcon;
+            try {
+                URL curatorUrl = MysteryGame.class.getResource("/images/portrait (1).png");
+                if (curatorUrl != null) {
+                    curatorIcon = new ImageIcon(curatorUrl);
+                } else {
+                    BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = placeholder.createGraphics();
+                    g2d.setColor(Color.RED);
+                    g2d.fillRect(0, 0, 200, 200);
+                    g2d.dispose();
+                    curatorIcon = new ImageIcon(placeholder);
+                }
+            } catch (Exception e) {
+                BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = placeholder.createGraphics();
+                g2d.setColor(Color.RED);
+                g2d.fillRect(0, 0, 200, 200);
+                g2d.dispose();
+                curatorIcon = new ImageIcon(placeholder);
+            }
+
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
 
@@ -482,7 +602,7 @@ public class MysteryGame {
             contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
             // Curator Image Setup
-            URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
+            URL curatorUrl = MysteryGame.class.getResource("/images/portrait (1).png");
             ImageIcon curatorIcon = new ImageIcon(curatorUrl);
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
@@ -578,7 +698,7 @@ public class MysteryGame {
             JPanel curatorPanel = new JPanel(new BorderLayout());
             curatorPanel.setOpaque(false);
 
-            URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
+            URL curatorUrl = MysteryGame.class.getResource("/images/portrait (1).png");
             ImageIcon curatorIcon = new ImageIcon(curatorUrl);
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
@@ -658,7 +778,7 @@ public class MysteryGame {
             JPanel curatorPanel = new JPanel(new BorderLayout());
             curatorPanel.setOpaque(false);
 
-            URL curatorUrl = new URL("file:///C:/Users/15862/Desktop/portrait%20(1).png");
+            URL curatorUrl = MysteryGame.class.getResource("/images/portrait (1).png");
             ImageIcon curatorIcon = new ImageIcon(curatorUrl);
             Image scaledCurator = curatorIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel curatorImage = new JLabel(new ImageIcon(scaledCurator));
@@ -740,8 +860,8 @@ public class MysteryGame {
 
             // Load and add detective image
             String detectiveImagePath = playerCharacter.equals("Detective Sir") ?
-                    "C:\\Users\\15862\\Desktop\\Detective You (1).png" :
-                    "C:\\Users\\15862\\Desktop\\Detective Laura.png";
+                    "/images/Detective You (1).png" :
+                    "/images/Detective You.png";
             ImageIcon detectiveIcon = new ImageIcon(detectiveImagePath);
             Image scaledDetective = detectiveIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel detectiveImage = new JLabel(new ImageIcon(scaledDetective));
@@ -779,7 +899,7 @@ public class MysteryGame {
             blackwoodPanel.setOpaque(false);
 
             // Load and add Blackwood image
-            URL blackwoodUrl = new URL("file:///C:/Users/15862/Desktop/MRBLACKWOOD.png");
+            URL blackwoodUrl = MysteryGame.class.getResource("/images/MRBLACKWOOD.png");
             ImageIcon blackwoodIcon = new ImageIcon(blackwoodUrl);
             Image scaledBlackwood = blackwoodIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel blackwoodImage = new JLabel(new ImageIcon(scaledBlackwood));
@@ -871,7 +991,7 @@ public class MysteryGame {
             blackwoodPanel.setOpaque(false);
 
             // Load and add Blackwood image
-            URL blackwoodUrl = new URL("file:///C:/Users/15862/Desktop/blackwood_portrait.png");
+            URL blackwoodUrl = MysteryGame.class.getResource("/images/MRBLACKWOOD.png");
             ImageIcon blackwoodIcon = new ImageIcon(blackwoodUrl);
             Image scaledBlackwood = blackwoodIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             JLabel blackwoodImage = new JLabel(new ImageIcon(scaledBlackwood));
