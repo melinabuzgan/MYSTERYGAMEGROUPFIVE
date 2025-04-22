@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.awt.image.BufferedImage;
 
@@ -103,6 +101,111 @@ public class MysteryGame {
         });
 
         return button;
+    }
+
+    private static void showFinalDecisionScreen() {
+        // Remove the try block since we're not actually doing anything that throws exceptions
+        // Clear the current screen
+        frame.getContentPane().removeAll();
+
+        // Create main panel with background
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(Color.BLACK);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Add title
+        JLabel titleLabel = new JLabel("FINAL DECISION");
+        titleLabel.setFont(TITLE_FONT);
+        titleLabel.setForeground(DARK_RED);
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Create scrollable clues panel
+        JPanel cluesPanel = new JPanel();
+        cluesPanel.setLayout(new BoxLayout(cluesPanel, BoxLayout.Y_AXIS));
+        cluesPanel.setBackground(new Color(30, 30, 30));
+
+        // Add all clues
+        String[] allClues = {
+                "The cameras malfunctioned during the theft",
+                "Mr. Blackwood had special access privileges",
+                "Jenkins' coffee alibi doesn't hold up",
+                "Blackwood suddenly started using his access last week",
+                "Blackwood is obsessed with the Oracle's power",
+                "Blackwood admitted to bribing Jenkins"
+        };
+
+        for (String clue : allClues) {
+            JTextArea clueText = new JTextArea("• " + clue);
+            clueText.setFont(new Font("Press Start 2P", Font.PLAIN, 14));
+            clueText.setForeground(Color.WHITE);
+            clueText.setBackground(new Color(50, 50, 50));
+            clueText.setLineWrap(true);
+            clueText.setWrapStyleWord(true);
+            clueText.setEditable(false);
+            clueText.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+
+            cluesPanel.add(clueText);
+            cluesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
+
+        JScrollPane scrollPane = new JScrollPane(cluesPanel);
+        scrollPane.setBorder(BorderFactory.createLineBorder(DARK_RED, 2));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Add suspect selection
+        JLabel questionLabel = new JLabel("WHO STOLE THE ORACLE?");
+        questionLabel.setFont(new Font("Algerian", Font.BOLD, 28));
+        questionLabel.setForeground(DARK_RED);
+        questionLabel.setHorizontalAlignment(JLabel.CENTER);
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 20, 0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 10, 50));
+        buttonPanel.setOpaque(false);
+
+        // Create suspect buttons
+        JButton curatorBtn = createStyledButton("The Curator");
+        curatorBtn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(frame,
+                    "Wrong! He was just negligent.\nThe thief gets away!",
+                    "Case Closed",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        });
+
+        JButton jenkinsBtn = createStyledButton("Security Jenkins");
+        jenkinsBtn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(frame,
+                    "Partial truth - she was bribed,\nbut Blackwood escapes!",
+                    "Case Closed",
+                    JOptionPane.WARNING_MESSAGE);
+            System.exit(0);
+        });
+
+        JButton blackwoodBtn = createStyledButton("Mr. Blackwood");
+        blackwoodBtn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(frame,
+                    "CORRECT! He wanted the Oracle's power for himself.\nCONGRATULATIONS DETECTIVE!",
+                    "Case Solved",
+                    JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        });
+
+        buttonPanel.add(curatorBtn);
+        buttonPanel.add(jenkinsBtn);
+        buttonPanel.add(blackwoodBtn);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setOpaque(false);
+        bottomPanel.add(questionLabel, BorderLayout.NORTH);
+        bottomPanel.add(buttonPanel, BorderLayout.CENTER);
+
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Show the screen
+        frame.add(mainPanel);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private static void showCharacterSelectionScreen() {
@@ -551,20 +654,11 @@ public class MysteryGame {
             buttonPanel.setOpaque(false);
             buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 10));
 
-            JButton option1Button = createStyledButton("Investigate Blackwood");
-            option1Button.addActionListener(e -> showBlackwoodInvestigation());
 
             JButton option2Button = createStyledButton("Examine Security System");
-            option2Button.addActionListener(e -> {
-                JOptionPane.showMessageDialog(frame,
-                        "You decide to examine the security system for weaknesses...",
-                        "Investigation Path",
-                        JOptionPane.INFORMATION_MESSAGE);
-            });
+            option2Button.addActionListener(e -> examineSecuritySystem());
 
-            buttonPanel.add(option1Button);
             buttonPanel.add(option2Button);
-
             dialoguePanel.add(dialogueText, BorderLayout.CENTER);
             contentPanel.add(leftPanel, BorderLayout.WEST);
             contentPanel.add(dialoguePanel, BorderLayout.CENTER);
@@ -578,6 +672,109 @@ public class MysteryGame {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Error loading curator response screen", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void examineSecuritySystem() {
+        try {
+            frame.getContentPane().removeAll();
+            URL bgUrl = new URL("https://pixeljoint.com/files/icons/full/re2demake3.png");
+            ImageIcon backgroundImage = new ImageIcon(bgUrl);
+
+            JPanel securityPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+            securityPanel.setLayout(new BorderLayout());
+
+            JPanel contentPanel = new JPanel(new BorderLayout(0, -20));
+            contentPanel.setOpaque(false);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(300, 100, -500, 20));
+
+            // Load Jenkins image
+            ImageIcon jenkinsIcon;
+            try {
+                URL jenkinsUrl = MysteryGame.class.getResource("/images/Jenkins.png");
+                if (jenkinsUrl != null) {
+                    jenkinsIcon = new ImageIcon(jenkinsUrl);
+                } else {
+                    BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = placeholder.createGraphics();
+                    g2d.setColor(Color.GRAY);
+                    g2d.fillRect(0, 0, 200, 200);
+                    g2d.dispose();
+                    jenkinsIcon = new ImageIcon(placeholder);
+                }
+            } catch (Exception e) {
+                BufferedImage placeholder = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = placeholder.createGraphics();
+                g2d.setColor(Color.GRAY);
+                g2d.fillRect(0, 0, 200, 200);
+                g2d.dispose();
+                jenkinsIcon = new ImageIcon(placeholder);
+            }
+
+            Image scaledJenkins = jenkinsIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            JLabel jenkinsImage = new JLabel(new ImageIcon(scaledJenkins));
+
+            JPanel leftPanel = new JPanel();
+            leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+            leftPanel.setOpaque(false);
+            leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+            JLabel jenkinsTitle = new JLabel("<html><center>Security Guard<br>Jenkins</center></html>");
+            jenkinsTitle.setFont(new Font("Algerian", Font.BOLD, 18));
+            jenkinsTitle.setForeground(Color.WHITE);
+            jenkinsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+            leftPanel.add(jenkinsTitle);
+            leftPanel.add(Box.createVerticalStrut(10));
+            leftPanel.add(jenkinsImage);
+
+            JPanel dialoguePanel = new JPanel(new BorderLayout());
+            dialoguePanel.setOpaque(false);
+            dialoguePanel.setBorder(BorderFactory.createEmptyBorder(50, 0, -100, 0));
+
+            JTextArea dialogueText = new JTextArea(
+                    "JENKINS: \"I told the cops already—I saw nothing! The cameras glitched, and I was on my rounds.\"\n\n" +
+                            "DETECTIVE: \"Your alibi for 2:17 AM?\"\n\n" +
+                            "JENKINS: \"I was… uh… in the break room! Yeah, getting coffee!\"\n\n" +
+                            "CLUE: No coffee stains in break room logbook.\n\n" +
+                            "DETECTIVE: \"The curator says you borrow his keycard sometimes. True?\"\n\n" +
+                            "JENKINS: (sweating): \"That's a lie! Wait—unless… did Blackwood put her up to this?\"\n\n" +
+                            "CLUE: Guard suspects Blackwood is framing him."
+            );
+            dialogueText.setFont(new Font("Press Start 2P", Font.PLAIN, 12));
+            dialogueText.setForeground(Color.WHITE);
+            dialogueText.setBackground(new Color(0, 0, 0, 150));
+            dialogueText.setLineWrap(true);
+            dialogueText.setWrapStyleWord(true);
+            dialogueText.setEditable(false);
+            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 50, 0));
+
+            JButton investigateButton = createStyledButton("Investigate Blackwood");
+            investigateButton.addActionListener(e -> showBlackwoodInvestigation());
+
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setOpaque(false);
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 10));
+            buttonPanel.add(investigateButton);
+
+            dialoguePanel.add(dialogueText, BorderLayout.CENTER);
+            contentPanel.add(leftPanel, BorderLayout.WEST);
+            contentPanel.add(dialoguePanel, BorderLayout.CENTER);
+            securityPanel.add(buttonPanel, BorderLayout.NORTH);
+            securityPanel.add(contentPanel, BorderLayout.CENTER);
+
+            frame.add(securityPanel);
+            frame.revalidate();
+            frame.repaint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Error loading security room scene", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -754,6 +951,7 @@ public class MysteryGame {
             JOptionPane.showMessageDialog(frame, "Error loading Blackwood interest screen", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private static void showBlackwoodLocation() {
         try {
             frame.getContentPane().removeAll();
@@ -962,6 +1160,7 @@ public class MysteryGame {
             JOptionPane.showMessageDialog(frame, "Error loading Blackwood estate screen", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private static void showBlackwoodOption1() {
         try {
             // Remove the current content
@@ -1045,12 +1244,14 @@ public class MysteryGame {
                 dialoguePanel.add(followUpText, BorderLayout.SOUTH);
                 followUpButton.setEnabled(false);
 
+                // Create the continue button here
                 JButton continueButton = createStyledButton("Continue Investigation");
                 continueButton.addActionListener(ev -> {
                     JOptionPane.showMessageDialog(frame,
                             "Clue Gained: Blackwood obsessed with the Oracle's \"whispers.\"",
                             "New Clue",
                             JOptionPane.INFORMATION_MESSAGE);
+                    showBlackwoodConfrontation(); // Call the new confrontation screen
                 });
 
                 optionsPanel.removeAll();
@@ -1077,6 +1278,131 @@ public class MysteryGame {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Error loading Blackwood option 1 screen", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void showBlackwoodConfrontation() {
+        try {
+            frame.getContentPane().removeAll();
+
+            // Load the estate background image
+            URL bgUrl = new URL("https://img.freepik.com/premium-photo/inside-library-pixel-art-style-maniac-mansion_923558-5562.jpg");
+            ImageIcon backgroundImage = new ImageIcon(bgUrl);
+
+            // Create panel with background
+            JPanel confrontationPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+            confrontationPanel.setLayout(new BorderLayout());
+
+            // Main content panel
+            JPanel contentPanel = new JPanel(new BorderLayout());
+            contentPanel.setOpaque(false);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+            // Left panel - Detective
+            JPanel detectivePanel = new JPanel(new BorderLayout());
+            detectivePanel.setOpaque(false);
+
+            // Load detective image based on selected character
+            String detectiveImagePath = playerCharacter.equals("Detective Sir") ?
+                    "/images/Detective You (1).png" :
+                    "/images/Detective You.png";
+
+            ImageIcon detectiveIcon = new ImageIcon(MysteryGame.class.getResource(detectiveImagePath));
+            Image scaledDetective = detectiveIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            JLabel detectiveImage = new JLabel(new ImageIcon(scaledDetective));
+
+            JLabel detectiveLabel = new JLabel("<html><center>" + playerCharacter + "<br>" + playerName + "</center></html>");
+            detectiveLabel.setFont(new Font("Algerian", Font.BOLD, 18));
+            detectiveLabel.setForeground(Color.WHITE);
+            detectiveLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            detectivePanel.add(detectiveLabel, BorderLayout.NORTH);
+            detectivePanel.add(detectiveImage, BorderLayout.CENTER);
+
+            // Right panel - Blackwood
+            JPanel blackwoodPanel = new JPanel(new BorderLayout());
+            blackwoodPanel.setOpaque(false);
+
+            URL blackwoodUrl = MysteryGame.class.getResource("/images/MRBLACKWOOD.png");
+            ImageIcon blackwoodIcon = new ImageIcon(blackwoodUrl);
+            Image scaledBlackwood = blackwoodIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            JLabel blackwoodImage = new JLabel(new ImageIcon(scaledBlackwood));
+
+            JLabel blackwoodLabel = new JLabel("<html><center>Mr. Blackwood<br>Museum Benefactor</center></html>");
+            blackwoodLabel.setFont(new Font("Algerian", Font.BOLD, 18));
+            blackwoodLabel.setForeground(Color.WHITE);
+            blackwoodLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            blackwoodPanel.add(blackwoodLabel, BorderLayout.NORTH);
+            blackwoodPanel.add(blackwoodImage, BorderLayout.CENTER);
+
+            // Dialogue panel
+            JPanel dialoguePanel = new JPanel(new BorderLayout());
+            dialoguePanel.setOpaque(false);
+            dialoguePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            JTextArea dialogueText = new JTextArea(
+                    "DETECTIVE: \"You have access to the security system. Convenient, isn't it? " +
+                            "A witness saw someone of your description at the museum that night.\" (Bluff)\n\n" +
+                            "BLACKWOOD: \"Witness? *Really?*\" (Eyes narrow.) \"Name them.\"\n\n" +
+                            "DETECTIVE: \"The guard. She ID'd your cigar smoke.\" " +
+                            "(If player has cigar clue, Blackwood panics.)\n\n" +
+                            "BLACKWOOD: \"That drunkard Jenkins? I paid her enough to—\" (Catches himself.)\n\n" +
+                            "*CLUE: Blackwood bribed the guard!*\n\n" +
+                            "DETECTIVE: \"My mistake.\" (Blackwood smirks; no clue.)"
+            );
+            dialogueText.setFont(new Font("Press Start 2P", Font.PLAIN, 12));
+            dialogueText.setForeground(Color.WHITE);
+            dialogueText.setBackground(new Color(0, 0, 0, 150));
+            dialogueText.setLineWrap(true);
+            dialogueText.setWrapStyleWord(true);
+            dialogueText.setEditable(false);
+            dialogueText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+            dialoguePanel.add(dialogueText, BorderLayout.CENTER);
+
+            // Options panel
+            JPanel optionsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            optionsPanel.setOpaque(false);
+            optionsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+
+            JButton finalDecisionButton = createStyledButton("Final Decision");
+            finalDecisionButton.addActionListener(e -> {
+                showFinalDecisionScreen();  // This will show the final decision screen
+            });
+
+            optionsPanel.add(finalDecisionButton);
+
+            // Add components to content panel
+            JPanel characterPanel = new JPanel(new GridLayout(1, 2));
+            characterPanel.setOpaque(false);
+            characterPanel.add(detectivePanel);
+            characterPanel.add(blackwoodPanel);
+
+            contentPanel.add(characterPanel, BorderLayout.NORTH);
+            contentPanel.add(dialoguePanel, BorderLayout.CENTER);
+            contentPanel.add(optionsPanel, BorderLayout.SOUTH);
+
+            // Add content panel to main panel
+            confrontationPanel.add(contentPanel, BorderLayout.CENTER);
+
+            // Update the frame
+            frame.add(confrontationPanel);
+            frame.revalidate();
+            frame.repaint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame,
+                    "Error loading confrontation screen",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
