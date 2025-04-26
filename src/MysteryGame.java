@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MysteryGame {
     // Main application window
@@ -126,7 +128,7 @@ public class MysteryGame {
         cluesPanel.setBackground(new Color(30, 30, 30));
 
         // Add all clues
-        String[] allClues = {
+        String[] allCluesArray = {
                 "The cameras malfunctioned during the theft",
                 "Mr. Blackwood had special access privileges",
                 "Jenkins' coffee alibi doesn't hold up",
@@ -134,6 +136,8 @@ public class MysteryGame {
                 "Blackwood is obsessed with the Oracle's power",
                 "Blackwood admitted to bribing Jenkins"
         };
+
+        ArrayList<String> allClues = new ArrayList<>(Arrays.asList(allCluesArray));
 
         for (String clue : allClues) {
             JTextArea clueText = new JTextArea("• " + clue);
