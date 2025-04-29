@@ -4,6 +4,8 @@ import java.net.URL;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MysteryGame {
     // Main application window
@@ -15,6 +17,8 @@ public class MysteryGame {
     // Player information
     private static String playerName = "";
     private static String playerCharacter = "";
+
+    private static Map<String, Object> gameState = new HashMap<>();
 
     // Custom colors and fonts
     private static final Color DARK_RED = new Color(139, 0, 0);
